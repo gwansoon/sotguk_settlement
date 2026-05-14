@@ -27,6 +27,29 @@ h1 {
     color: #2c3e50;
 }
 
+.main-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.inline-input {
+    width: 80px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0 4px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+}
+
+.inline-input:focus {
+    border-bottom: 2px solid #3498db;
+}
+
+/* 로그인 폼 스타일 */
 .form-group {
     margin-bottom: 16px;
 }
@@ -39,7 +62,7 @@ label {
     color: #555;
 }
 
-input {
+.form-group input {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -48,9 +71,13 @@ input {
     transition: border-color 0.2s;
 }
 
-input:focus {
+.form-group input:focus {
     outline: none;
     border-color: #3498db;
+}
+
+#loginScreen .btn.primary {
+    margin-top: 12px;
 }
 
 .button-group {

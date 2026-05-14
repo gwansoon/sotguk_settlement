@@ -7,35 +7,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>💰 일일 정산</h1>
-        
+    <!-- 로그인 화면 -->
+    <div id="loginScreen" class="container">
+        <h1>지점 로그인</h1>
         <div class="form-group">
-            <label for="date">정산 날짜</label>
-            <input type="date" id="date">
+            <label for="loginBranchName">지점명</label>
+            <input type="text" id="loginBranchName" placeholder="예: 신봉">
         </div>
-        
         <div class="form-group">
-            <label for="salesCount">오늘 판매량 (건)</label>
-            <input type="number" id="salesCount" placeholder="예: 45">
+            <label for="loginPin">PIN 번호 (6자리)</label>
+            <input type="password" id="loginPin" maxlength="6" placeholder="••••••" inputmode="numeric" pattern="[0-9]*">
         </div>
-        
-        <div class="form-group">
-            <label for="revenue">오늘 매출액 (원)</label>
-            <input type="number" id="revenue" placeholder="예: 1500000">
-        </div>
+        <button id="loginBtn" class="btn primary">로그인</button>
+    </div>
 
+    <!-- 메인 정산 화면 (초기에는 숨김) -->
+    <div id="mainScreen" class="container" style="display: none;">
+        <h1 class="main-title">
+            솥국 
+            <input type="text" id="branchName" class="inline-input" placeholder="강남"> 
+            지점 일일 정산
+        </h1>
         <div class="button-group">
             <button id="saveBtn" class="btn primary">저장하기</button>
             <button id="shareBtn" class="btn kakao">💬 정산 내역 공유하기</button>
         </div>
-
         <div id="resultArea" class="result-area" style="display: none;">
             <h3>📝 정산 요약</h3>
             <p id="summaryText"></p>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
