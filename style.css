@@ -8,7 +8,7 @@ body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     background-color: #f4f6f8;
     color: #333;
-    padding: 20px;
+    padding: 20px 20px 80px; /* 푸터 공간 확보 */
 }
 
 .container {
@@ -35,18 +35,20 @@ h1 {
 }
 
 .inline-input {
-    width: 80px;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    padding: 0 4px;
-    border: none;
+    color: #595348;
+    padding: 0 8px;
+    font-size: 26px; /* 글씨 크기 키우기 */
+    font-weight: bold; /* 글씨를 더 두껍게 */
     border-bottom: 2px solid #ccc;
-    border-radius: 0;
 }
 
-.inline-input:focus {
-    border-bottom: 2px solid #3498db;
+/* 날짜 스타일 */
+.current-date {
+    text-align: center;
+    color: #444; /* 색상을 더 진한 회갈색/검은색 계열로 변경 */
+    font-size: 18px; /* 글씨 크기 키우기 */
+    margin-top: -12px; /* 위로 조금 끌어올리기 */
+    margin-bottom: 24px;
 }
 
 /* 로그인 폼 스타일 */
@@ -74,6 +76,48 @@ label {
 .form-group input:focus {
     outline: none;
     border-color: #3498db;
+}
+
+/* 커스텀 PIN 번호 입력 스타일 */
+.pin-wrapper {
+    position: relative;
+    height: 48px;
+}
+
+.pin-wrapper input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* 기본 네모 입력창을 완전히 투명하게 숨김 */
+    z-index: 2;
+    cursor: pointer;
+}
+
+.pin-display {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 1;
+}
+
+.pin-display .dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* 기본 회색 점 */
+    transition: background-color 0.2s;
+}
+
+.pin-display .dot.filled {
+    background-color: #333; /* 입력 시 채워질 검은색 점 */
 }
 
 #loginScreen .btn.primary {
@@ -109,11 +153,28 @@ label {
 }
 
 .result-area {
-    margin-top: 24px;
+    position: relative;
     padding: 16px;
     background-color: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #eee;
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #888;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #333;
 }
 
 .result-area h3 {
@@ -123,5 +184,152 @@ label {
 
 .result-area p {
     line-height: 1.6;
-    white-space: pre-line;
+    white-space: pre-wrap; /* 스페이스바(들여쓰기)를 그대로 유지하게 변경 */
+}
+
+/* 하단 푸터 메뉴 스타일 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+    border-top: 1px solid #eee;
+}
+
+.footer-menu {
+    display: flex;
+    justify-content: space-around;
+    max-width: 480px; /* .container와 동일한 너비 */
+    margin: 0 auto;
+}
+
+.menu-item {
+    flex: 1;
+    padding: 8px 0;
+    text-align: center;
+    text-decoration: none;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.menu-item:not(:last-child) {
+    border-right: 1px solid #eee;
+}
+
+.menu-item .icon {
+    font-size: 22px;
+}
+
+.menu-item .label {
+    display: block;
+    font-size: 11px;
+}
+
+.menu-item.active,
+.menu-item:hover {
+    color: #3498db;
+}
+
+/* 정산 입력 영역 스타일 */
+.settlement-section {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    border: 2px solid #ccc;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.settlement-section.compact {
+    padding: 16px 24px; /* 위아래 여백을 24px에서 16px로 줄여서 높이를 작게 만듦 */
+}
+
+.settlement-section h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.input-row:last-child {
+    margin-bottom: 0; /* 박스 안의 마지막 줄 밑에 생기는 불필요한 여백 제거 */
+}
+
+.input-row label {
+    flex: 0 0 65px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0;
+    word-break: keep-all; /* 줄바꿈 방지 */
+}
+
+.input-row input {
+    padding: 10px 8px; /* 좁은 폰 화면에 맞춰 안쪽 여백 살짝 축소 */
+    font-size: 14px;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+    outline: none;
+    min-width: 0; /* 핵심: 입력칸이 화면 밖으로 삐져나가는 것 방지 */
+    width: 100%;
+}
+
+.input-row input:focus {
+    background-color: #fff;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.input-row input:first-of-type {
+    flex: 0 0 60px; /* 건수 칸 고정된 작은 너비 */
+    text-align: center;
+    padding: 10px 4px; /* 건수 칸은 좁으므로 좌우 여백을 더 줄임 */
+}
+
+.input-row input:last-of-type {
+    flex: 1; /* 금액 칸 나머지 영역 전체 차지 */
+    text-align: right;
+}
+
+.settlement-section textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+    outline: none;
+    resize: vertical; /* 세로로만 크기 조절 가능하게 */
+    font-family: inherit;
+}
+
+.settlement-section textarea:focus {
+    background-color: #fff;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 2px dashed #eee;
+    font-weight: 800;
+    font-size: 18px;
+    /* color: #2980b9; 마이너스 느낌의 붉은색 대신 신뢰감을 주는 파란색으로 변경 */
+    color: #575f64; /* 마이너스 느낌의 붉은색 대신 신뢰감을 주는 파란색으로 변경 */
 }

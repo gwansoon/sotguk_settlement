@@ -5,18 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>일일 매장 정산</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,"> <!-- 파비콘 404 에러 방지용 빈 아이콘 -->
 </head>
 <body>
     <!-- 로그인 화면 -->
     <div id="loginScreen" class="container">
-        <h1>지점 로그인</h1>
+        <h1>솥국 지점 로그인</h1>
         <div class="form-group">
             <label for="loginBranchName">지점명</label>
-            <input type="text" id="loginBranchName" placeholder="예: 신봉">
+            <input type="text" id="loginBranchName" placeholder="예: 도곡">
         </div>
         <div class="form-group">
-            <label for="loginPin">PIN 번호 (6자리)</label>
-            <input type="password" id="loginPin" maxlength="6" placeholder="••••••" inputmode="numeric" pattern="[0-9]*">
+            <label for="loginPin">PIN 번호</label>
+            <div class="pin-wrapper">
+                <input type="password" id="loginPin" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+                <div class="pin-display" id="pinDisplay">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
         </div>
         <button id="loginBtn" class="btn primary">로그인</button>
     </div>
@@ -25,18 +36,78 @@
     <div id="mainScreen" class="container" style="display: none;">
         <h1 class="main-title">
             솥국 
-            <input type="text" id="branchName" class="inline-input" placeholder="강남"> 
+            <span id="branchName" class="inline-input">강남</span> 
             지점 일일 정산
         </h1>
+        <p id="currentDate" class="current-date"></p>
+        
+        <!-- 매출 정산 영역 -->
+        <div class="settlement-section">
+            <h2>매출 정산</h2>
+            <div class="input-row">
+                <label>홀 (포장)</label>
+                <input type="number" id="salesHallCount" placeholder="건수" inputmode="numeric">
+                <input type="text" id="salesHallAmount" placeholder="금액 (원)" inputmode="numeric">
+            </div>
+            <div class="input-row">
+                <label>배달</label>
+                <input type="number" id="salesDeliveryCount" placeholder="건수" inputmode="numeric">
+                <input type="text" id="salesDeliveryAmount" placeholder="금액 (원)" inputmode="numeric">
+            </div>
+            <div class="input-row">
+                <label>미분류</label>
+                <input type="number" id="salesUnclassifiedCount" placeholder="건수" inputmode="numeric">
+                <input type="text" id="salesUnclassifiedAmount" placeholder="금액 (원)" inputmode="numeric">
+            </div>
+            <div class="total-row">
+                <span>총 매출액</span>
+                <span id="salesTotalAmount">0원</span>
+            </div>
+        </div>
+
+        <!-- 기타 항목 영역 -->
+        <div class="settlement-section compact">
+            
+            <div class="input-row">
+                <h2 style="margin: 0;">쿠폰사용</h2>
+                <input type="number" id="couponCount" placeholder="갯수" inputmode="numeric" style="flex: 1; text-align: left; padding: 10px 12px;">
+            </div>
+        </div>
+
+        <!-- 특이사항 영역 -->
+        <div class="settlement-section">
+            <h2>특이사항(전달사항)</h2>
+            <textarea id="memoInput" rows="3" placeholder="오늘 있었던 특이사항이나 본사에 전달할 내용을 적어주세요."></textarea>
+        </div>
+
         <div class="button-group">
-            <button id="saveBtn" class="btn primary">저장하기</button>
+            <button id="saveBtn" class="btn primary">요약보기</button>
+            <div id="resultArea" class="result-area" style="display: none;">
+                <button id="closeResultBtn" class="close-btn">&times;</button>
+                <h3>📝 정산 요약</h3>
+                <p id="summaryText"></p>
+            </div>
             <button id="shareBtn" class="btn kakao">💬 정산 내역 공유하기</button>
         </div>
-        <div id="resultArea" class="result-area" style="display: none;">
-            <h3>📝 정산 요약</h3>
-            <p id="summaryText"></p>
-        </div>
     </div>
-    <script src="app.js"></script>
+
+    <!-- 하단 푸터 메뉴 -->
+    <footer id="footerNav" style="display: none;">
+        <nav class="footer-menu">
+            <a href="#" class="menu-item active">
+                <span class="icon">🏠</span>
+                <span class="label">정산</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">📊</span>
+                <span class="label">월별통계</span>
+            </a>
+            <a href="#" class="menu-item">
+                <span class="icon">⚙️</span>
+                <span class="label">설정</span>
+            </a>
+        </nav>
+    </footer>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
