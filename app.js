@@ -43,6 +43,14 @@ const salesTotalAmount = document.getElementById('salesTotalAmount');
 const couponCount = document.getElementById('couponCount');
 const memoInput = document.getElementById('memoInput');
 
+// --- 모바일 줌인/줌아웃 강제 차단 ---
+// 두 손가락으로 화면을 확대/축소하는 터치 동작 방지
+document.addEventListener('touchmove', function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
 // --- 오늘 날짜 표시 ---
 const todayDate = new Date();
 const year = todayDate.getFullYear();

@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    touch-action: manipulation; /* 더블탭 화면 확대 방지 */
 }
 
 body {
@@ -275,7 +276,7 @@ footer {
 
 .input-row input {
     padding: 10px 8px; /* 좁은 폰 화면에 맞춰 안쪽 여백 살짝 축소 */
-    font-size: 14px;
+    font-size: 16px; /* 아이폰 입력 시 자동 확대 방지 (16px 이상 필수) */
     border: 1px solid #e1e4e8;
     border-radius: 8px;
     background-color: #f8f9fa;
@@ -305,7 +306,7 @@ footer {
 .settlement-section textarea {
     width: 100%;
     padding: 12px;
-    font-size: 14px;
+    font-size: 16px; /* 아이폰 입력 시 자동 확대 방지 (16px 이상 필수) */
     border: 1px solid #e1e4e8;
     border-radius: 8px;
     background-color: #f8f9fa;
