@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 매장 정산</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💰 일일 정산</h1>
+        
+        <div class="form-group">
+            <label for="date">정산 날짜</label>
+            <input type="date" id="date">
+        </div>
+        
+        <div class="form-group">
+            <label for="salesCount">오늘 판매량 (건)</label>
+            <input type="number" id="salesCount" placeholder="예: 45">
+        </div>
+        
+        <div class="form-group">
+            <label for="revenue">오늘 매출액 (원)</label>
+            <input type="number" id="revenue" placeholder="예: 1500000">
+        </div>
+
+        <div class="button-group">
+            <button id="saveBtn" class="btn primary">저장하기</button>
+            <button id="shareBtn" class="btn kakao">💬 정산 내역 공유하기</button>
+        </div>
+
+        <div id="resultArea" class="result-area" style="display: none;">
+            <h3>📝 정산 요약</h3>
+            <p id="summaryText"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
