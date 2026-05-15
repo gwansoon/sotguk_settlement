@@ -109,6 +109,8 @@ loginBtn.addEventListener('click', async () => {
 
     if (!branchName) {
         alert('지점명을 입력해주세요.');
+        loginBranchNameInput.value = '';
+        loginBranchNameInput.focus();
         return;
     }
     if (!pin || pin.length !== 6) {
@@ -137,6 +139,8 @@ loginBtn.addEventListener('click', async () => {
             }
         } else {
             alert('등록되지 않은 지점입니다. 관리자에게 문의해주세요.');
+            loginBranchNameInput.value = '';
+            loginBranchNameInput.focus();
             loginPinInput.value = '';
             pinDots.forEach(dot => dot.classList.remove('filled'));
             return;
@@ -144,7 +148,7 @@ loginBtn.addEventListener('click', async () => {
 
         // 로그인 성공: 지점명 저장 및 화면 전환
         localStorage.setItem('savedBranchName', branchName);
-        branchNameInput.innerText = branchName; // 메인 화면 지점명에 텍스트로 표시
+        branchNameInput.innerText = branchName+'점'; // 메인 화면 지점명에 텍스트로 표시
         loginScreen.style.display = 'none';
         mainScreen.style.display = 'block';
         footerNav.style.display = 'block';

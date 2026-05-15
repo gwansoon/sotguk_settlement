@@ -9,8 +9,8 @@ export function generateSummaryMessage(data) {
         memo
     } = data;
 
-    let message = '솥국 일일 정산\n' +
-        `[${branchName} 지점 - ${dateText}]\n\n` +
+    let message = `솥국 일일 정산 [${branchName}]\n` +
+        `[${dateText}]\n\n` +
         `---------------------------------\n` +
         `✔️ 매출 정산\n` +
         `   • 홀(포장) : ${hallC}건 / ${hallA}원\n` +
@@ -24,7 +24,7 @@ export function generateSummaryMessage(data) {
     if (memo) {
         message += `✔️ 특이사항(전달사항)\n${memo}\n---------------------------------\n`;
     } else {
-        message += `✔️ 특이사항(전달사항) x\n---------------------------------\n`;
+        message += `✔️ 특이사항(전달사항) 없습니다.\n---------------------------------\n`;
     }
 
     message += '\n오늘 하루도 다들 수고 많으셨습니다!!!';
