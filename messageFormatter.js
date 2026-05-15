@@ -6,13 +6,23 @@ export function generateSummaryMessage(data) {
         unclassifiedC, unclassifiedA,
         totalA,
         couponC,
-        memo
+        memo,
+        prep
     } = data;
 
     let message = `솥국 일일 정산 [${branchName}]\n` +
         `[${dateText}]\n\n` +
-        `---------------------------------\n` +
-        `✔️ 매출 정산\n` +
+        `---------------------------------\n`;
+
+    if (prep && prep.length > 0) {
+        message += `✔️ 오늘 준비량\n`;
+        prep.forEach(p => {
+            message += `   • ${p.name} : ${p.total}\n`;
+        });
+        message += `---------------------------------\n`;
+    }
+
+    message += `✔️ 매출 정산\n` +
         `   • 홀(포장) : ${hallC}건 / ${hallA}원\n` +
         `   • 배달 : ${deliveryC}건 / ${deliveryA}원\n` +
         `   • 미분류 : ${unclassifiedC}건 / ${unclassifiedA}원\n` +

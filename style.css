@@ -247,10 +247,17 @@ footer {
     padding: 16px 24px; /* 위아래 여백을 24px에서 16px로 줄여서 높이를 작게 만듦 */
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+}
+
 .settlement-section h2 {
     font-size: 18px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 0;
     color: #2c3e50;
 }
 
@@ -333,4 +340,76 @@ footer {
     font-size: 18px;
     /* color: #2980b9; 마이너스 느낌의 붉은색 대신 신뢰감을 주는 파란색으로 변경 */
     color: #575f64; /* 마이너스 느낌의 붉은색 대신 신뢰감을 주는 파란색으로 변경 */
+}
+
+/* 준비량 정산 영역 스타일 */
+.prep-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.prep-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.prep-row.inactive {
+    opacity: 0.35;
+    filter: grayscale(100%);
+}
+.prep-label {
+    flex: 0 0 65px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+.prep-buttons {
+    flex: 1;
+    display: flex;
+    gap: 4px; /* 버튼 사이 간격 살짝 줄임 */
+    flex-wrap: wrap;
+    align-items: center;
+}
+.prep-buttons button {
+    padding: 6px 8px; /* 버튼 안쪽 좌우 여백 살짝 줄임 */
+    font-size: 13px;
+    border: 1px solid #3498db;
+    background-color: #fff;
+    color: #3498db;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+}
+.prep-buttons button:active {
+    background-color: #3498db;
+    color: #fff;
+}
+.reset-all-btn {
+    border: 1px solid #e74c3c;
+    background-color: #fff;
+    color: #e74c3c;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+}
+.reset-all-btn:active {
+    background-color: #e74c3c;
+    color: #fff;
+}
+.prep-total {
+    flex: 0 0 75px; /* 공간 너비를 50px에서 75px로 늘림 */
+    text-align: right;
+    font-size: 15px;
+    font-weight: bold;
+    color: #2c3e50;
+    white-space: nowrap; /* 글자가 길어져도 무조건 한 줄로 나오도록 줄바꿈 방지 */
+}
+
+/* 갈비탕, 갈비찜은 버튼이 3개라 공간이 좁으므로 총합 칸 너비를 다시 줄임 */
+#prep-total-galbi,
+#prep-total-galbijjim {
+    flex: 0 0 45px;
 }

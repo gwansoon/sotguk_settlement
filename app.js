@@ -42,6 +42,8 @@ const salesUnclassifiedAmount = document.getElementById('salesUnclassifiedAmount
 const salesTotalAmount = document.getElementById('salesTotalAmount');
 const couponCount = document.getElementById('couponCount');
 const memoInput = document.getElementById('memoInput');
+const prepContainer = document.getElementById('prepContainer');
+const prepResetAllBtn = document.getElementById('prepResetAllBtn');
 
 // --- 모바일 줌인/줌아웃 강제 차단 ---
 // 두 손가락으로 화면을 확대/축소하는 터치 동작 방지
@@ -56,8 +58,81 @@ const todayDate = new Date();
 const year = todayDate.getFullYear();
 const month = todayDate.getMonth() + 1;
 const day = todayDate.getDate();
+
+// 기존코드
 const week = ['일', '월', '화', '수', '목', '금', '토'][todayDate.getDay()];
+
 currentDateElement.innerText = `${year}년 ${month}월 ${day}일 (${week})`;
+
+// --- 준비량 정산 데이터 ---
+const prepMenus = [
+    { id: 'yuk', name: '육개장', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0,1,2,3,4,5,6], alwaysTop: true },
+    { id: 'galbi', name: '갈비탕', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [0,1,2,3,4,5,6], alwaysTop: true },
+    { id: 'seonji', name: '선지', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
+    { id: 'sau', name: '사우', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
+    { id: 'galbijjim', name: '갈비찜', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [6], alwaysTop: false }, // 토
+    { id: 'bone', name: '뼈해장국', type: 'kg', options: [15, 20], labels: ['15', '20'], days: [2, 4, 6], alwaysTop: false }, // 화목토
+    { id: 'gom', name: '곰탕', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [2, 4, 6], alwaysTop: false } // 화목토
+];
+
+let prepTotals = {};
+prepMenus.forEach(m => prepTotals[m.id] = 0);
+
+function formatPrepTotal(type, val) {
+    if (val === 0) return '-';
+    if (type === 'kg') return val + 'kg';
+    
+    // pot (한솥, 반솥)
+    const whole = Math.floor(val);
+    const half = val % 1 !== 0;
+    let text = '';
+    const names = ['영', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'];
+    
+    if (whole > 0) {
+        text += (names[whole] || whole) + '솥';
+    }
+    if (half) {
+        text += (text ? ' 반' : '반솥');
+    }
+    return text;
+}
+
+function renderPrepMenus() {
+    if (!prepContainer) return;
+    const today = todayDate.getDay(); // 실제 오늘 요일 사용
+    
+    // 항상 위로 갈 메뉴 최상단, 그 다음 오늘 활성화 여부
+    const sortedMenus = [...prepMenus].sort((a, b) => {
+        if (a.alwaysTop && !b.alwaysTop) return -1;
+        if (!a.alwaysTop && b.alwaysTop) return 1;
+        
+        const aActive = a.days.includes(today);
+        const bActive = b.days.includes(today);
+        if (aActive && !bActive) return -1;
+        if (!aActive && bActive) return 1;
+        return 0;
+    });
+
+    prepContainer.innerHTML = sortedMenus.map(menu => {
+        const isActive = menu.days.includes(today);
+        const rowClass = isActive ? 'prep-row active' : 'prep-row inactive';
+        
+        const btnsHtml = menu.options.map((opt, i) => 
+            `<button class="add-btn" data-id="${menu.id}" data-val="${opt}">${menu.labels[i]}</button>`
+        ).join('');
+
+        return `
+            <div class="${rowClass}">
+                <div class="prep-label">${menu.name}</div>
+                <div class="prep-buttons">
+                    ${btnsHtml}
+                </div>
+                <div class="prep-total" id="prep-total-${menu.id}">${formatPrepTotal(menu.type, prepTotals[menu.id])}</div>
+            </div>
+        `;
+    }).join('');
+}
+renderPrepMenus(); // 초기 렌더링
 
 // --- 매출 총합 자동 계산 ---
 function formatNumberWithComma(value) {
@@ -158,6 +233,32 @@ loginBtn.addEventListener('click', async () => {
     }
 });
 
+// 준비량 버튼 클릭 이벤트 위임
+if (prepContainer) {
+    prepContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        
+        const id = btn.dataset.id;
+        if (btn.classList.contains('add-btn')) {
+            prepTotals[id] += parseFloat(btn.dataset.val);
+        }
+        
+        document.getElementById(`prep-total-${id}`).innerText = formatPrepTotal(prepMenus.find(m => m.id === id).type, prepTotals[id]);
+    });
+}
+
+// 준비량 전체 초기화 버튼 이벤트
+if (prepResetAllBtn) {
+    prepResetAllBtn.addEventListener('click', () => {
+        Object.keys(prepTotals).forEach(id => {
+            prepTotals[id] = 0; // 데이터 0으로 초기화
+            const el = document.getElementById(`prep-total-${id}`);
+            if (el) el.innerText = formatPrepTotal(prepMenus.find(m => m.id === id).type, 0); // 화면 값 업데이트
+        });
+    });
+}
+
 // 입력된 정산 데이터를 수집하는 함수
 function gatherSettlementData() {
     return {
@@ -171,7 +272,11 @@ function gatherSettlementData() {
         unclassifiedA: salesUnclassifiedAmount.value || '0',
         totalA: salesTotalAmount.innerText,
         couponC: couponCount.value || '0',
-        memo: memoInput.value.trim()
+        memo: memoInput.value.trim(),
+        prep: prepMenus.map(m => ({
+            name: m.name,
+            total: formatPrepTotal(m.type, prepTotals[m.id])
+        })).filter(p => p.total !== '-') // 기록된 데이터만 요약에 포함
     };
 }
 
