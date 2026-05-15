@@ -42,14 +42,36 @@
              일일 정산
         </h1>
         <p id="currentDate" class="current-date"></p>
+        <p id="weatherInfo" class="weather-info"></p>
         
+        <!-- 유동인구 영역 -->
+        <div class="settlement-section compact">
+            <div class="section-header" style="margin-bottom: 0;">
+                <h2 style="margin: 0; white-space: nowrap; margin-right: 16px;">유동인구</h2>
+                <div class="traffic-buttons" id="trafficButtons">
+                    <button class="traffic-btn" data-val="붐빔">붐빔</button>
+                    <button class="traffic-btn active" data-val="보통">보통</button>
+                    <button class="traffic-btn" data-val="한산함">한산함</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 재고 관리 영역 -->
+        <div class="settlement-section">
+            <div class="section-header">
+                <h2 id="inventoryToggle" class="toggle-header">재고 관리 <span class="toggle-icon">∨</span></h2>
+                <button id="inventoryResetAllBtn" class="reset-all-btn">초기화 ↺</button>
+            </div>
+            <div id="inventoryContainer" class="hide-inactive"></div>
+        </div>
+
         <!-- 오늘 준비량 정산 영역 -->
         <div class="settlement-section">
             <div class="section-header">
-                <h2>오늘 준비량 정산</h2>
+                <h2 id="prepToggle" class="toggle-header">준비량 정산 <span class="toggle-icon">∨</span></h2>
                 <button id="prepResetAllBtn" class="reset-all-btn">초기화 ↺</button>
             </div>
-            <div id="prepContainer"></div>
+            <div id="prepContainer" class="hide-inactive"></div>
         </div>
 
         <!-- 매출 정산 영역 -->
@@ -76,14 +98,36 @@
             </div>
         </div>
 
-        <!-- 기타 항목 영역 -->
+        <!-- 쿠폰사용 영역 -->
         <div class="settlement-section compact">
-            
             <div class="input-row">
                 <h2 style="margin: 0;">쿠폰사용</h2>
                 <input type="number" id="couponCount" placeholder="갯수" inputmode="numeric" style="flex: 1; text-align: left; padding: 10px 12px;">
             </div>
         </div>
+
+
+        <!-- 고기사용량 영역 -->
+        <div class="settlement-section compact" style="margin-bottom: 8px;">
+            <div class="section-header toggle-header" id="meatToggle" style="margin-bottom: 8px;">
+                <div>
+                    <h2 style="margin: 0; display: inline-block;">고기사용량</h2>
+                    <span style="font-size: 13px; color: #888; margin-left: 6px;">   * 눈꽃고기 해당지점만 입력</span>
+                </div>
+                <span class="toggle-icon">∨</span>
+            </div>
+            <div id="meatContainer" class="hide-content">
+                <div class="input-row" style="margin-bottom: 8px;">
+                    <span style="flex: 0 0 65px; font-size: 13px; color: #555;">이번달 누적</span>
+                    <span id="meatCumulative" style="flex: 1; text-align: right; font-weight: bold; color: #2c3e50;">0kg</span>
+                </div>
+                <div class="input-row">
+                    <span style="flex: 0 0 65px; font-size: 13px; color: #555;">오늘 사용</span>
+                    <input type="number" id="meatUsage" placeholder="kg" inputmode="numeric" style="flex: 1; text-align: right; padding: 8px 12px;">
+                </div>
+            </div>
+        </div>
+
 
         <!-- 특이사항 영역 -->
         <div class="settlement-section">
@@ -100,7 +144,9 @@
             </div>
             <button id="shareBtn" class="btn kakao">💬 정산 내역 공유하기</button>
         </div>
+        
     </div>
+    <div class="version-info">v1.0.0 Buildit.</div>
 
     <!-- 하단 푸터 메뉴 -->
     <footer id="footerNav" style="display: none;">

@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { generateSummaryMessage } from "./messageFormatter.js";
+import { initWeather } from "./weatherManager.js";
 
 // 파이어베이스 설정
 const firebaseConfig = {
@@ -31,7 +32,9 @@ const resultArea = document.getElementById('resultArea');
 const summaryText = document.getElementById('summaryText');
 const closeResultBtn = document.getElementById('closeResultBtn');
 const footerNav = document.getElementById('footerNav');
+const menuItems = document.querySelectorAll('.menu-item');
 const currentDateElement = document.getElementById('currentDate');
+const weatherInfoElement = document.getElementById('weatherInfo');
 
 const salesHallCount = document.getElementById('salesHallCount');
 const salesHallAmount = document.getElementById('salesHallAmount');
@@ -41,9 +44,22 @@ const salesUnclassifiedCount = document.getElementById('salesUnclassifiedCount')
 const salesUnclassifiedAmount = document.getElementById('salesUnclassifiedAmount');
 const salesTotalAmount = document.getElementById('salesTotalAmount');
 const couponCount = document.getElementById('couponCount');
+const meatUsage = document.getElementById('meatUsage');
+const meatCumulative = document.getElementById('meatCumulative');
 const memoInput = document.getElementById('memoInput');
 const prepContainer = document.getElementById('prepContainer');
 const prepResetAllBtn = document.getElementById('prepResetAllBtn');
+const inventoryContainer = document.getElementById('inventoryContainer');
+const inventoryResetAllBtn = document.getElementById('inventoryResetAllBtn');
+const prepToggle = document.getElementById('prepToggle');
+const inventoryToggle = document.getElementById('inventoryToggle');
+const meatToggle = document.getElementById('meatToggle');
+const meatContainer = document.getElementById('meatContainer');
+const trafficBtns = document.querySelectorAll('.traffic-btn');
+
+// 고기 누적 계산을 위한 전역 변수
+let currentMonthMeatTotal = 0;
+let meatUsageData = {};
 
 // --- 모바일 줌인/줌아웃 강제 차단 ---
 // 두 손가락으로 화면을 확대/축소하는 터치 동작 방지
@@ -68,8 +84,8 @@ currentDateElement.innerText = `${year}년 ${month}월 ${day}일 (${week})`;
 const prepMenus = [
     { id: 'yuk', name: '육개장', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0,1,2,3,4,5,6], alwaysTop: true },
     { id: 'galbi', name: '갈비탕', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [0,1,2,3,4,5,6], alwaysTop: true },
-    { id: 'seonji', name: '선지', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
-    { id: 'sau', name: '사우', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
+    { id: 'seonji', name: '선지해장국', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
+    { id: 'sau', name: '사골우거지', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
     { id: 'galbijjim', name: '갈비찜', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [6], alwaysTop: false }, // 토
     { id: 'bone', name: '뼈해장국', type: 'kg', options: [15, 20], labels: ['15', '20'], days: [2, 4, 6], alwaysTop: false }, // 화목토
     { id: 'gom', name: '곰탕', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [2, 4, 6], alwaysTop: false } // 화목토
@@ -133,6 +149,88 @@ function renderPrepMenus() {
     }).join('');
 }
 renderPrepMenus(); // 초기 렌더링
+
+// --- 재고 관리 데이터 ---
+const inventoryMenus = [
+    { id: 'inv_yuk', name: '육개장', types: ['2인', '3인'], days: [0,1,2,3,4,5,6], alwaysTop: true },
+    { id: 'inv_galbi', name: '갈비탕', types: ['2인', '3인'], days: [0,1,2,3,4,5,6], alwaysTop: true },
+    { id: 'inv_seonji', name: '선지해장국', types: ['2인', '3인'], days: [0, 1, 3, 5], alwaysTop: false },
+    { id: 'inv_sau', name: '사골우거지', types: ['2인', '3인'], days: [0, 1, 3, 5], alwaysTop: false },
+    { id: 'inv_galbijjim', name: '갈비찜', types: ['수량'], days: [6], alwaysTop: false },
+    { id: 'inv_bone', name: '뼈해장국', types: ['2인', '3인'], days: [2, 4, 6], alwaysTop: false },
+    { id: 'inv_gom', name: '곰탕', types: ['2인', '3인'], days: [2, 4, 6], alwaysTop: false }
+];
+
+function renderInventoryMenus() {
+    if (!inventoryContainer) return;
+    const today = todayDate.getDay();
+
+    const sortedMenus = [...inventoryMenus].sort((a, b) => {
+        if (a.alwaysTop && !b.alwaysTop) return -1;
+        if (!a.alwaysTop && b.alwaysTop) return 1;
+        
+        const aActive = a.days.includes(today);
+        const bActive = b.days.includes(today);
+        if (aActive && !bActive) return -1;
+        if (!aActive && bActive) return 1;
+        return 0;
+    });
+
+    inventoryContainer.innerHTML = sortedMenus.map(menu => {
+        const isActive = menu.days.includes(today);
+        const rowClass = isActive ? 'inventory-row active' : 'inventory-row inactive';
+        
+        const inputsHtml = menu.types.map((type, i) => `
+            <div class="inv-input-group">
+                <span>${type}</span>
+                <input type="number" id="${menu.id}_${i}" pattern="[0-9]*" inputmode="numeric" placeholder="0">
+            </div>
+        `).join('');
+
+        return `
+            <div class="${rowClass}">
+                <div class="inventory-label">${menu.name}</div>
+                <div class="inventory-inputs">
+                    ${inputsHtml}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+renderInventoryMenus();
+
+// --- 흑백(비활성) 항목 숨기기 토글 이벤트 ---
+if (prepToggle && prepContainer) {
+    prepToggle.addEventListener('click', () => {
+        prepContainer.classList.toggle('hide-inactive');
+        const icon = prepToggle.querySelector('.toggle-icon');
+        if (icon) icon.innerText = prepContainer.classList.contains('hide-inactive') ? '∨' : '∧';
+    });
+}
+if (inventoryToggle && inventoryContainer) {
+    inventoryToggle.addEventListener('click', () => {
+        inventoryContainer.classList.toggle('hide-inactive');
+        const icon = inventoryToggle.querySelector('.toggle-icon');
+        if (icon) icon.innerText = inventoryContainer.classList.contains('hide-inactive') ? '∨' : '∧';
+    });
+}
+if (meatToggle && meatContainer) {
+    meatToggle.addEventListener('click', () => {
+        meatContainer.classList.toggle('hide-content');
+        const icon = meatToggle.querySelector('.toggle-icon');
+        if (icon) icon.innerText = meatContainer.classList.contains('hide-content') ? '∨' : '∧';
+    });
+}
+
+// --- 유동인구 버튼 클릭 이벤트 ---
+let selectedTraffic = '보통'; // 기본값
+trafficBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        trafficBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedTraffic = btn.dataset.val;
+    });
+});
 
 // --- 매출 총합 자동 계산 ---
 function formatNumberWithComma(value) {
@@ -200,6 +298,9 @@ loginBtn.addEventListener('click', async () => {
         const branchRef = doc(db, "branches", branchName);
         const branchSnap = await getDoc(branchRef);
 
+        let lat = null;
+        let lon = null;
+
         if (branchSnap.exists()) {
             console.log("👉 기존 지점 로그인 시도");
             // 1. 이미 등록된 지점인 경우: DB의 핀번호와 입력한 핀번호 비교
@@ -211,6 +312,63 @@ loginBtn.addEventListener('click', async () => {
                 loginPinInput.value = '';
                 pinDots.forEach(dot => dot.classList.remove('filled'));
                 return;
+            }
+            
+            // 파이어베이스에 저장된 좌표가 있으면 가져오기
+            if (dbData.lat) lat = dbData.lat;
+            if (dbData.lon) lon = dbData.lon;
+
+            // --- 고기 사용량 누적 계산 (이번 달) ---
+            const currentYYYYMM = `${year}-${String(month).padStart(2, '0')}`;
+            const todayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            meatUsageData = dbData.meatUsage || {};
+            
+            let pastDaysTotal = 0;
+            let hasOldData = false;
+            
+            for (const [dateKey, amount] of Object.entries(meatUsageData)) {
+                if (dateKey.startsWith(currentYYYYMM)) {
+                    if (dateKey !== todayStr) {
+                        pastDaysTotal += amount;
+                    }
+                } else {
+                    // 이번 달이 아닌 이전 달 데이터는 삭제하도록 설정
+                    meatUsageData[dateKey] = deleteField();
+                    hasOldData = true;
+                }
+            }
+            
+            if (hasOldData) {
+                // 파이어베이스에서 이전 달 데이터 즉시 완전 삭제
+                await setDoc(branchRef, { meatUsage: meatUsageData }, { merge: true });
+                // 로컬 변수에서도 찌꺼기 삭제
+                for (const dateKey in meatUsageData) {
+                    if (!dateKey.startsWith(currentYYYYMM)) delete meatUsageData[dateKey];
+                }
+            }
+            currentMonthMeatTotal = pastDaysTotal;
+            
+            if (meatUsageData[todayStr]) {
+                meatUsage.value = meatUsageData[todayStr];
+            } else {
+                meatUsage.value = '';
+            }
+            
+            if (meatCumulative) {
+                const todayVal = parseFloat(meatUsage.value) || 0;
+                const total = currentMonthMeatTotal + todayVal;
+                meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${total}kg`;
+
+                // 누적이 1 이상이면 자동으로 펼치기
+                if (total >= 1) {
+                    meatContainer.classList.remove('hide-content');
+                    const icon = meatToggle ? meatToggle.querySelector('.toggle-icon') : null;
+                    if (icon) icon.innerText = '∧';
+                } else {
+                    meatContainer.classList.add('hide-content');
+                    const icon = meatToggle ? meatToggle.querySelector('.toggle-icon') : null;
+                    if (icon) icon.innerText = '∨';
+                }
             }
         } else {
             alert('등록되지 않은 지점입니다. 관리자에게 문의해주세요.');
@@ -224,6 +382,10 @@ loginBtn.addEventListener('click', async () => {
         // 로그인 성공: 지점명 저장 및 화면 전환
         localStorage.setItem('savedBranchName', branchName);
         branchNameInput.innerText = branchName+'점'; // 메인 화면 지점명에 텍스트로 표시
+        
+        // 지점 좌표로 날씨 초기화
+        initWeather(weatherInfoElement, lat, lon);
+
         loginScreen.style.display = 'none';
         mainScreen.style.display = 'block';
         footerNav.style.display = 'block';
@@ -259,11 +421,71 @@ if (prepResetAllBtn) {
     });
 }
 
+// 재고 관리 전체 초기화 버튼 이벤트
+if (inventoryResetAllBtn) {
+    inventoryResetAllBtn.addEventListener('click', () => {
+        const inputs = inventoryContainer.querySelectorAll('input');
+        inputs.forEach(input => input.value = '');
+    });
+}
+
+// --- 고기 사용량 입력 실시간 누적 표시 ---
+if (meatUsage) {
+    meatUsage.addEventListener('input', () => {
+        const todayVal = parseFloat(meatUsage.value) || 0;
+        if (meatCumulative) {
+            meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${currentMonthMeatTotal + todayVal}kg`;
+        }
+    });
+}
+
+// 파이어베이스에 고기 사용량 안전하게 업데이트하는 함수
+async function saveMeatDataToDB() {
+    const bName = localStorage.getItem('savedBranchName');
+    if(!bName) return;
+    
+    const todayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const val = parseFloat(meatUsage.value) || 0;
+    
+    // 사용량이 0 이하이고, 기존 파이어베이스에도 오늘 기록이 없다면 불필요한 통신(필드 생성) 생략
+    if (val <= 0 && !(todayStr in meatUsageData)) {
+        return;
+    }
+    
+    if (val > 0) {
+        meatUsageData[todayStr] = val;
+    } else {
+        meatUsageData[todayStr] = deleteField(); // 실수로 적고 지웠을 때 파이어베이스에서도 완전 삭제
+    }
+    
+    try {
+        const branchRef = doc(db, "branches", bName);
+        await setDoc(branchRef, { meatUsage: meatUsageData }, { merge: true });
+        
+        if (val <= 0) delete meatUsageData[todayStr]; // 로컬 데이터 찌꺼기 정리
+    } catch(e) {
+        console.error("고기사용량 저장 실패", e);
+    }
+}
+
 // 입력된 정산 데이터를 수집하는 함수
 function gatherSettlementData() {
+    const inventoryData = [];
+    inventoryMenus.forEach(menu => {
+        menu.types.forEach((type, i) => {
+            const val = document.getElementById(`${menu.id}_${i}`).value;
+            if (val && parseInt(val) > 0) {
+                const itemName = type === '수량' ? menu.name : `${menu.name} ${type}`;
+                inventoryData.push({ name: itemName, details: `${val}개` });
+            }
+        });
+    });
+
     return {
         branchName: branchNameInput.innerText,
         dateText: currentDateElement.innerText,
+        weather: weatherInfoElement ? weatherInfoElement.innerText : '',
+        traffic: selectedTraffic,
         hallC: salesHallCount.value || '0',
         hallA: salesHallAmount.value || '0',
         deliveryC: salesDeliveryCount.value || '0',
@@ -272,11 +494,14 @@ function gatherSettlementData() {
         unclassifiedA: salesUnclassifiedAmount.value || '0',
         totalA: salesTotalAmount.innerText,
         couponC: couponCount.value || '0',
+        meat: meatUsage.value || '0',
+        meatTotal: `${currentMonthMeatTotal + (parseFloat(meatUsage.value) || 0)}kg`,
         memo: memoInput.value.trim(),
         prep: prepMenus.map(m => ({
             name: m.name,
             total: formatPrepTotal(m.type, prepTotals[m.id])
-        })).filter(p => p.total !== '-') // 기록된 데이터만 요약에 포함
+        })).filter(p => p.total !== '-'), // 기록된 데이터만 요약에 포함
+        inventory: inventoryData
     };
 }
 
@@ -296,6 +521,7 @@ closeResultBtn.addEventListener('click', () => {
 
 // 공유 버튼 클릭 이벤트
 shareBtn.addEventListener('click', async () => {
+    await saveMeatDataToDB(); // 공유하기 전 고기사용량 DB 업데이트
     const data = gatherSettlementData();
 
     if (!data.branchName) {
@@ -315,4 +541,14 @@ shareBtn.addEventListener('click', async () => {
     } else {
         navigator.clipboard.writeText(messageText).then(() => alert('내역이 복사되었습니다. 카카오톡에 붙여넣기 해주세요!'));
     }
+});
+
+// 하단 푸터 메뉴 클릭 이벤트 (개발 중 알림)
+menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault(); // '#' 링크 클릭 시 페이지 상단으로 튕기는 현상 방지
+        if (!item.classList.contains('active')) {
+            alert('개발중입니다.');
+        }
+    });
 });
