@@ -6,38 +6,20 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> --> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>솥국 매장 정산</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/index.css">
     <link rel="icon" href="app-icon.png">
     <link rel="apple-touch-icon" href="app-icon.png">
     <link rel="manifest" href="manifest.json">
+    <script>
+        if (!localStorage.getItem('savedBranchName') || sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace('html/login.html');
+        }
+    </script>
 </head>
 <body>
-    <!-- 로그인 화면 -->
-    <div id="loginScreen" class="container">
-        <h1>솥국 지점 로그인</h1>
-        <div class="form-group">
-            <label for="loginBranchName">지점명</label>
-            <input type="text" id="loginBranchName" placeholder="예: 도곡">
-        </div>
-        <div class="form-group">
-            <label for="loginPin">PIN 번호</label>
-            <div class="pin-wrapper">
-                <input type="password" id="loginPin" maxlength="6" inputmode="numeric" pattern="[0-9]*">
-                <div class="pin-display" id="pinDisplay">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-        </div>
-        <button id="loginBtn" class="btn primary">로그인</button>
-    </div>
-
-    <!-- 메인 정산 화면 (초기에는 숨김) -->
-    <div id="mainScreen" class="container" style="display: none;">
+    <!-- 메인 정산 화면 -->
+    <div id="mainScreen" class="container">
         <h1 class="main-title">
             솥국 
             <span id="branchName" class="inline-input">강남</span> 
@@ -148,25 +130,9 @@
         </div>
         
     </div>
+
     <div class="version-info">v1.0.1 Buildit.</div>
 
-    <!-- 하단 푸터 메뉴 -->
-    <footer id="footerNav" style="display: none;">
-        <nav class="footer-menu">
-            <a href="#" class="menu-item active">
-                <span class="icon">📊</span>
-                <span class="label">일일정산</span>
-            </a>
-            <a href="#" class="menu-item">
-                <span class="icon">🏠</span>
-                <span class="label">Test</span>
-            </a>
-            <a href="#" class="menu-item">
-                <span class="icon">⚙️</span>
-                <span class="label">Test</span>
-            </a>
-        </nav>
-    </footer>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

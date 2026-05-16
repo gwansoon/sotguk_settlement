@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>솥국 매장 정산 - 시제 정산</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="icon" href="../app-icon.png">
+    <link rel="apple-touch-icon" href="../app-icon.png">
+    <link rel="manifest" href="../manifest.json">
+    <script>
+        if (!localStorage.getItem('savedBranchName') || sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-title">
+            💰 시제(가게현금) 정산
+        </h1>
+        <p style="text-align: center; color: #888; margin-top: 50px;">개발중인 빈 페이지입니다.</p>
+    </div>
+    <div class="version-info">v1.0.1 Buildit.</div>
+    <script type="module" src="../js/cashManager.js"></script>
+</body>
+</html>

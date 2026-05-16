@@ -2,6 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 import { getFirestore, doc, getDoc, setDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { generateSummaryMessage } from "./messageFormatter.js";
 import { initWeather } from "./weatherManager.js";
+import { renderFooter } from "./footer.js";
+
+const savedBranchName = localStorage.getItem('savedBranchName');
+
+// 하단 푸터 렌더링 (일일 정산 탭 활성화)
+renderFooter('navDaily');
+document.getElementById('footerNav').style.display = 'block';
 
 // 파이어베이스 설정
 const firebaseConfig = {
@@ -18,12 +25,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // DOM 요소 가져오기
-const loginScreen = document.getElementById('loginScreen');
-const mainScreen = document.getElementById('mainScreen');
-const loginBranchNameInput = document.getElementById('loginBranchName');
-const loginPinInput = document.getElementById('loginPin');
-const loginBtn = document.getElementById('loginBtn');
-const pinDots = document.querySelectorAll('#pinDisplay .dot');
 
 const branchNameInput = document.getElementById('branchName');
 const saveBtn = document.getElementById('saveBtn');
@@ -32,7 +33,6 @@ const resultArea = document.getElementById('resultArea');
 const summaryText = document.getElementById('summaryText');
 const closeResultBtn = document.getElementById('closeResultBtn');
 const footerNav = document.getElementById('footerNav');
-const menuItems = document.querySelectorAll('.menu-item');
 const currentDateElement = document.getElementById('currentDate');
 const weatherInfoElement = document.getElementById('weatherInfo');
 
@@ -60,6 +60,8 @@ const trafficBtns = document.querySelectorAll('.traffic-btn');
 // 고기 누적 계산을 위한 전역 변수
 let currentMonthMeatTotal = 0;
 let meatUsageData = {};
+
+branchNameInput.innerText = savedBranchName + '점'; // 메인 화면 지점명에 텍스트로 표시
 
 // --- 모바일 줌인/줌아웃 강제 차단 ---
 // 두 손가락으로 화면을 확대/축소하는 터치 동작 방지
@@ -256,64 +258,18 @@ function calculateTotalSales() {
     if (input) input.addEventListener('input', handleAmountInput);
 });
 
-// --- 로그인 기능 ---
-// 앱 실행 시 저장된 지점명 불러오기
-const savedBranchName = localStorage.getItem('savedBranchName');
-if (savedBranchName) {
-    loginBranchNameInput.value = savedBranchName;
-}
-
-// PIN 번호 입력 시 점 색상 변경
-loginPinInput.addEventListener('input', (e) => {
-    const length = e.target.value.length;
-    pinDots.forEach((dot, index) => {
-        if (index < length) {
-            dot.classList.add('filled');
-        } else {
-            dot.classList.remove('filled');
-        }
-    });
-});
-
-// 로그인 버튼 클릭 이벤트
-loginBtn.addEventListener('click', async () => {
-    const branchName = loginBranchNameInput.value.trim();
-    const pin = loginPinInput.value;
-
-    if (!branchName) {
-        alert('지점명을 입력해주세요.');
-        loginBranchNameInput.value = '';
-        loginBranchNameInput.focus();
-        return;
-    }
-    if (!pin || pin.length !== 6) {
-        alert('6자리 PIN 번호를 입력해주세요.');
-        loginPinInput.value = '';
-        pinDots.forEach(dot => dot.classList.remove('filled'));
-        return;
-    }
-
+// --- 초기 데이터 세팅 함수 ---
+async function initDashboardData() {
     try {
-        // MySQL의 SELECT와 유사: 'branches' 컬렉션에서 지점명(branchName)으로 문서 가져오기
-        const branchRef = doc(db, "branches", branchName);
+        const branchRef = doc(db, "branches", savedBranchName);
         const branchSnap = await getDoc(branchRef);
 
         let lat = null;
         let lon = null;
 
         if (branchSnap.exists()) {
-            console.log("👉 기존 지점 로그인 시도");
-            // 1. 이미 등록된 지점인 경우: DB의 핀번호와 입력한 핀번호 비교
             const dbData = branchSnap.data();
-            console.log("DB에 저장된 PIN:", dbData.pin, " / 입력한 PIN:", pin);
 
-            if (dbData.pin !== pin) {
-                alert('PIN 번호가 올바르지 않습니다.');
-                loginPinInput.value = '';
-                pinDots.forEach(dot => dot.classList.remove('filled'));
-                return;
-            }
-            
             // 파이어베이스에 저장된 좌표가 있으면 가져오기
             if (dbData.lat) lat = dbData.lat;
             if (dbData.lon) lon = dbData.lon;
@@ -370,30 +326,15 @@ loginBtn.addEventListener('click', async () => {
                     if (icon) icon.innerText = '∨';
                 }
             }
-        } else {
-            alert('등록되지 않은 지점입니다. 관리자에게 문의해주세요.');
-            loginBranchNameInput.value = '';
-            loginBranchNameInput.focus();
-            loginPinInput.value = '';
-            pinDots.forEach(dot => dot.classList.remove('filled'));
-            return;
+            
+            // 지점 좌표로 날씨 초기화
+            initWeather(weatherInfoElement, lat, lon);
         }
-
-        // 로그인 성공: 지점명 저장 및 화면 전환
-        localStorage.setItem('savedBranchName', branchName);
-        branchNameInput.innerText = branchName+'점'; // 메인 화면 지점명에 텍스트로 표시
-        
-        // 지점 좌표로 날씨 초기화
-        initWeather(weatherInfoElement, lat, lon);
-
-        loginScreen.style.display = 'none';
-        mainScreen.style.display = 'block';
-        footerNav.style.display = 'block';
     } catch (error) {
-        console.error("Firebase 에러:", error);
-        alert('데이터베이스 통신 중 오류가 발생했습니다.');
+        console.error("데이터 초기화 에러:", error);
     }
-});
+}
+initDashboardData();
 
 // 준비량 버튼 클릭 이벤트 위임
 if (prepContainer) {
@@ -521,7 +462,6 @@ closeResultBtn.addEventListener('click', () => {
 
 // 공유 버튼 클릭 이벤트
 shareBtn.addEventListener('click', async () => {
-    await saveMeatDataToDB(); // 공유하기 전 고기사용량 DB 업데이트
     const data = gatherSettlementData();
 
     if (!data.branchName) {
@@ -539,16 +479,27 @@ shareBtn.addEventListener('click', async () => {
             console.log('공유 취소 또는 실패:', error);
         }
     } else {
-        navigator.clipboard.writeText(messageText).then(() => alert('내역이 복사되었습니다. 카카오톡에 붙여넣기 해주세요!'));
-    }
-});
-
-// 하단 푸터 메뉴 클릭 이벤트 (개발 중 알림)
-menuItems.forEach(item => {
-    item.addEventListener('click', (e) => {
-        e.preventDefault(); // '#' 링크 클릭 시 페이지 상단으로 튕기는 현상 방지
-        if (!item.classList.contains('active')) {
-            alert('개발중입니다.');
+        // HTTPS가 아닌 환경(와이파이 로컬 테스트 등)에서도 복사가 작동하도록 하는 구형 방식 (Fallback)
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(messageText);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = messageText;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+            alert('내역이 복사되었습니다. 카카오톡에 붙여넣기 해주세요!');
+        } catch (error) {
+            console.error('클립보드 복사 에러:', error);
+            alert('이 기기에서는 공유/복사 기능이 차단되어 있습니다.');
         }
-    });
+    }
+
+    // 공유 창이 뜨는 것과 동시에 백그라운드에서 안전하게 고기사용량 DB 업데이트
+    saveMeatDataToDB();
 });

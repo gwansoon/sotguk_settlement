@@ -1,0 +1,36 @@
+/* 로그인 폼 스타일 */
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* 커스텀 PIN 번호 입력 스타일 */
+.pin-wrapper { position: relative; height: 48px; }
+.pin-wrapper input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; color: transparent; background: transparent; caret-color: transparent; border: none; outline: none; font-size: 16px; z-index: 2; cursor: pointer; -webkit-text-fill-color: transparent; text-shadow: none; }
+
+.pin-display { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; gap: 20px; z-index: 1; pointer-events: none; }
+.pin-display .dot { width: 18px; height: 18px; border-radius: 50%; background-color: #e0e0e0; transition: background-color 0.2s; }
+.pin-display .dot.filled { background-color: #333; }
+
+#loginScreen .btn.primary { margin-top: 12px; }
