@@ -9,7 +9,7 @@ body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     background-color: #f4f6f8;
     color: #333;
-    padding: 20px 20px 80px; /* 푸터 공간 확보 */
+    padding: 20px 20px calc(64px + env(safe-area-inset-bottom)); /* 메뉴를 더 낮췄으므로 본문 하단 여백도 맞춰서 조절 */
 }
 
 .container {
@@ -206,6 +206,7 @@ footer {
     background-color: #fff;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
     border-top: 1px solid #eee;
+    padding-bottom: max(0px, calc(env(safe-area-inset-bottom) - 20px)); /* 아이폰 하단 여백을 더 빼서 메뉴를 화면 바닥 쪽으로 더 낮춤 */
 }
 
 .footer-menu {
