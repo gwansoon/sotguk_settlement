@@ -1,0 +1,107 @@
+/* 시제 정산 화면 전용 스타일 */
+
+.cash-title {
+    margin-bottom: 10px; /* 제목 아래 여백을 늘려서 공간 확보 */
+}
+
+.cash-row-2 {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px; /* 줄 간격 넓힘 */
+}
+
+.cash-row-3 {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px; /* 줄 간격 넓힘 */
+}
+
+.cash-row-direct {
+    margin-bottom: 20px !important; /* 직접입력 칸 하단 여백 */
+}
+
+.cash-input-wrap {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.cash-input-wrap.gap-4 { gap: 4px; }
+.cash-input-wrap.gap-2 { gap: 2px; }
+
+.cash-label-40 {
+    flex: 0 0 40px !important;
+    letter-spacing: -0.5px;
+}
+
+.cash-label-34 {
+    flex: 0 0 34px !important;
+    font-size: 11px !important;
+    letter-spacing: -0.5px;
+}
+
+.cash-label-34.tight {
+    letter-spacing: -1px;
+}
+
+.cash-label-50 {
+    flex: 0 0 50px !important;
+    font-size: 12px !important;
+    letter-spacing: -0.5px;
+}
+
+.cash-input {
+    padding: 4px 4px !important; /* 위아래 패딩을 6px에서 4px로 줄여서 세로 높이 축소 */
+    text-align: right !important;
+}
+
+.cash-input-direct {
+    padding: 4px 8px !important; /* 직접입력칸도 마찬가지로 세로 높이 축소 */
+    text-align: right !important;
+}
+
+.cash-total-row {
+    padding-top: 16px !important;
+    margin-top: 16px !important;
+}
+
+
+.settlement-section.compact {
+    margin-bottom: 24px;
+}
+
+.cash-total-amount {
+    color: #3498db !important;
+}
+
+/* 읽기 전용(자동계산) 입력칸 스타일 */
+.cash-readonly {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+    font-weight: 700 !important;
+}
+
+/* 적용 버튼 (회색 계열) */
+.btn-apply-gray {
+    background-color: #f1f3f5;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+}
+.btn-apply-gray:active {
+    background-color: #e9ecef;
+}
+
+/* 시제 정산 폼 입력칸 스타일 (높이 축소 및 정렬) */
+.cash-form-input {
+    padding: 6px 8px !important; /* 위아래 패딩을 10px에서 6px로 줄여서 세로 높이 축소 */
+    text-align: right !important; /* 금액은 오른쪽 정렬 */
+}
+.cash-form-input-left {
+    padding: 6px 8px !important;
+    text-align: left !important; /* 문자(입금자명 등)는 왼쪽 정렬 */
+}

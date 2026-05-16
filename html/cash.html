@@ -6,6 +6,7 @@
     <title>솥국 매장 정산 - 시제 정산</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/cash.css">
     <link rel="icon" href="../app-icon.png">
     <link rel="apple-touch-icon" href="../app-icon.png">
     <link rel="manifest" href="../manifest.json">
@@ -18,9 +19,110 @@
 <body>
     <div class="container">
         <h1 class="main-title">
-            💰 시제(가게현금) 정산
+            솥국 
+            <span id="cashBranchName" class="inline-input">강남</span> 
+             시제 정산
         </h1>
-        <p style="text-align: center; color: #888; margin-top: 50px;">개발중인 빈 페이지입니다.</p>
+        <p id="cashCurrentDate" class="current-date"></p>
+        
+        <!-- 현금 수량 입력 영역 -->
+        <div class="settlement-section compact">
+            <div class="section-header cash-title">
+                <h2 style="margin: 0;">현금 수량 계산기</h2>
+                <button id="cashResetBtn" class="reset-all-btn">초기화 ↺</button>
+            </div>
+            <div class="cash-row-2">
+                <div class="input-row cash-input-wrap gap-4">
+                    <label class="cash-label-40">5만원</label>
+                    <input type="number" id="cash50k" placeholder="장" inputmode="numeric" class="cash-input">
+                </div>
+                <div class="input-row cash-input-wrap gap-4">
+                    <label class="cash-label-40">1만원</label>
+                    <input type="number" id="cash10k" placeholder="장" inputmode="numeric" class="cash-input">
+                </div>
+            </div>
+            
+            <div class="cash-row-2">
+                <div class="input-row cash-input-wrap gap-4">
+                    <label class="cash-label-40">5천원</label>
+                    <input type="number" id="cash5k" placeholder="장" inputmode="numeric" class="cash-input">
+                </div>
+                <div class="input-row cash-input-wrap gap-4">
+                    <label class="cash-label-40">1천원</label>
+                    <input type="number" id="cash1k" placeholder="장" inputmode="numeric" class="cash-input">
+                </div>
+            </div>
+            
+            <div class="cash-row-3">
+                <div class="input-row cash-input-wrap gap-2">
+                    <label class="cash-label-34">500원</label>
+                    <input type="number" id="cash500" placeholder="개" inputmode="numeric" class="cash-input">
+                </div>
+                <div class="input-row cash-input-wrap gap-2">
+                    <label class="cash-label-34">100원</label>
+                    <input type="number" id="cash100" placeholder="개" inputmode="numeric" class="cash-input">
+                </div>
+                <div class="input-row cash-input-wrap gap-2">
+                    <label class="cash-label-34 tight">상품권</label>
+                    <input type="number" id="cashGift" placeholder="개" inputmode="numeric" class="cash-input">
+                </div>
+            </div>
+
+            <div class="input-row cash-input-wrap">
+                <label class="cash-label-50">직접입력</label>
+                <input type="text" id="cashDirectInput" placeholder="금액을 입력해주세요 (원)" inputmode="numeric" class="cash-input-direct">
+            </div>
+
+            <div class="total-row cash-total-row">
+                <span>총 잔액</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="cashTotalAmount" class="cash-total-amount">0원</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 시제 정산 폼 영역 -->
+        <div class="settlement-section">
+            <h2 style="margin-bottom: 16px;">시제 정산 내역</h2>
+            <div class="input-row">
+                <label style="flex: 0 0 75px;">시작금액</label>
+                <input type="text" id="startAmount" placeholder="금액 (원)" inputmode="numeric" class="cash-form-input">
+            </div>
+            <div class="input-row">
+                <label style="flex: 0 0 75px;">들어온금액</label>
+                <input type="text" id="inAmount" placeholder="금액 (원)" inputmode="numeric" class="cash-form-input">
+            </div>
+            <div class="input-row">
+                <label style="flex: 0 0 75px;">나간금액</label>
+                <input type="text" id="outAmount" placeholder="금액 (원)" inputmode="numeric" class="cash-form-input">
+            </div>
+            <div class="input-row">
+                <label style="flex: 0 0 75px;">입금자명</label>
+                <input type="text" id="bankDepositor" placeholder="입금자명" class="cash-form-input-left">
+            </div>
+            <div class="input-row">
+                <label style="flex: 0 0 75px;">마감잔액</label>
+                <input type="text" id="endAmount" placeholder="자동 계산" readonly class="cash-readonly cash-form-input" tabindex="-1">
+            </div>
+            <div class="input-row" style="margin-bottom: 4px;">
+                <label style="flex: 0 0 75px;">실제금액</label>
+                <input type="text" id="actualAmount" placeholder="자동 계산" readonly class="cash-readonly cash-form-input" tabindex="-1">
+            </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 14px;">
+                <span style="font-size: 13px; font-weight: 600; color: #555; margin-right: 12px;">차액(과부족)</span>
+                <span id="diffAmount" style="font-size: 16px; font-weight: bold; color: #2c3e50;">0원</span>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">비고 (나간내역 등)</label>
+                <textarea id="cashMemo" rows="3" placeholder="나간 내역이나 특이사항을 상세히 적어주세요."></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button id="cashSaveBtn" class="btn primary">저장</button>
+            </div>
+        </div>
+
     </div>
     <script type="module" src="../js/cashManager.js"></script>
 </body>
