@@ -1,8 +1,11 @@
+import { APP_VERSION } from "../version.js";
+
 export function renderFooter(activeId, pathToRoot = './') {
     const linkIndex = pathToRoot + 'index.html';
     const linkCash = pathToRoot === './' ? 'html/cash.html' : 'cash.html';
 
-    const footerHtml = `
+    const layoutHtml = `
+    <div class="version-info">${APP_VERSION}</div>
     <footer id="footerNav" style="display: none;">
         <nav class="footer-menu">
             <a href="${linkIndex}" id="navDaily" class="menu-item ${activeId === 'navDaily' ? 'active' : ''}">
@@ -21,7 +24,7 @@ export function renderFooter(activeId, pathToRoot = './') {
     </footer>
     `;
     
-    document.body.insertAdjacentHTML('beforeend', footerHtml);
+    document.body.insertAdjacentHTML('beforeend', layoutHtml);
 
     const navTest = document.getElementById('navTest');
     if (navTest) {

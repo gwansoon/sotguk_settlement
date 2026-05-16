@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { APP_VERSION } from "../version.js";
 
 // 이미 로그인 도장이 있다면 메인(일일정산) 화면으로 즉시 이동
 if (localStorage.getItem('savedBranchName') && sessionStorage.getItem('isLoggedIn') === 'true') {
@@ -20,6 +21,9 @@ const db = getFirestore(app);
 
 // 화면이 모두 그려진 후 안전하게 실행되도록 보호
 document.addEventListener('DOMContentLoaded', () => {
+    // 로그인 화면 하단에 버전 정보 추가
+    document.body.insertAdjacentHTML('beforeend', `<div class="version-info">${APP_VERSION}</div>`);
+
     const loginBranchNameInput = document.getElementById('loginBranchName');
     const loginPinInput = document.getElementById('loginPin');
     const loginBtn = document.getElementById('loginBtn');
