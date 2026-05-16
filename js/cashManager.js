@@ -201,7 +201,7 @@ amountInputs.forEach(id => {
 });
 
 // --- 시제 정산 파이어베이스 저장 로직 ---
-async function saveCashDataToDB() {
+async function saveCashDataToDB(showAlert = true) {
     if (!savedBranchName) return;
 
     const todayStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -223,10 +223,10 @@ async function saveCashDataToDB() {
                 [todayStr]: cashData
             }
         }, { merge: true });
-        alert(`[${cashCurrentDate.innerText}]\n시제 정산 데이터가 성공적으로 저장되었습니다!`);
+        if (showAlert) alert(`[${cashCurrentDate.innerText}]\n시제 정산 데이터가 성공적으로 저장되었습니다!`);
     } catch(e) {
         console.error("시제 정산 저장 실패", e);
-        alert('저장에 실패했습니다. 관리자에게 문의해주세요.');
+        if (showAlert) alert('저장에 실패했습니다. 관리자에게 문의해주세요.');
     }
 }
 
@@ -236,7 +236,7 @@ if (cashSaveBtn) {
     cashSaveBtn.addEventListener('click', async () => {
         cashSaveBtn.innerText = '저장 중...';
         cashSaveBtn.disabled = true;
-        await saveCashDataToDB();
+        await saveCashDataToDB(true); // 저장 버튼을 누를 때만 알림창 띄우기
         cashSaveBtn.innerText = '저장';
         cashSaveBtn.disabled = false;
     });
@@ -254,6 +254,9 @@ if (cashPreviewBtn) {
 
         cashPreviewBtn.innerText = '데이터 불러오는 중...';
         cashPreviewBtn.disabled = true;
+
+        // 미리보기 전 현재 작성 중인 데이터 조용히 저장
+        await saveCashDataToDB(false);
 
         try {
             const branchRef = doc(db, "branches", savedBranchName);
@@ -335,6 +338,9 @@ if (cashShareAllBtn) {
 
         cashShareAllBtn.innerText = '파일 생성 중...';
         cashShareAllBtn.disabled = true;
+
+        // 공유 전 현재 작성 중인 데이터 조용히 저장
+        await saveCashDataToDB(false);
 
         try {
             const branchRef = doc(db, "branches", savedBranchName);
