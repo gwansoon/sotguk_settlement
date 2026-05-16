@@ -1,0 +1,92 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+}
+
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    padding: 20px 20px calc(64px + env(safe-area-inset-bottom));
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+.main-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn.primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn.kakao {
+    background-color: #FEE500;
+    color: #000000;
+}
+
+.version-info {
+    text-align: center;
+    color: #bbb;
+    font-size: 12px;
+    margin-top: 24px;
+}
+
+/* 하단 푸터 메뉴 스타일 */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+    border-top: 1px solid #eee;
+    padding-bottom: max(0px, calc(env(safe-area-inset-bottom) - 20px));
+}
+
+.footer-menu { display: flex; justify-content: space-around; max-width: 480px; margin: 0 auto; }
+.menu-item { flex: 1; padding: 8px 0; text-align: center; text-decoration: none; color: #888; transition: color 0.2s; }
+.menu-item:not(:last-child) { border-right: 1px solid #eee; }
+.menu-item .icon { font-size: 22px; display: inline-block; transition: transform 0.2s ease; }
+.menu-item .label { display: block; font-size: 11px; }
+.menu-item.active, .menu-item:hover { color: #3498db; }
+.menu-item.active { font-weight: 700; }
+.menu-item.active .icon { transform: scale(1.15); }
