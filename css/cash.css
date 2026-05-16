@@ -105,3 +105,43 @@
     padding: 6px 8px !important;
     text-align: left !important; /* 문자(입금자명 등)는 왼쪽 정렬 */
 }
+
+/* 미리보기 표 스타일 */
+.preview-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* 아이폰 스크롤 부드럽게 */
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    background-color: #fff;
+}
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 700px; /* 가로 스크롤 생기도록 최소 너비 지정 */
+}
+.preview-table th, .preview-table td {
+    border: 1px solid #e1e4e8;
+    padding: 8px 6px;
+    text-align: right; /* 기본적으로 금액은 오른쪽 정렬 */
+}
+.preview-table th {
+    background-color: #f8f9fa;
+    text-align: center;
+    color: #555;
+    font-weight: bold;
+}
+.preview-table td:first-child, .preview-table td:nth-child(5), .preview-table td:last-child {
+    text-align: center; /* 날짜, 입금자명, 비고는 중앙 정렬 */
+}
+
+/* 오늘 날짜 강조 스타일 */
+.current-date.is-today {
+    color: #202020 !important;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-color: #3498db;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+}

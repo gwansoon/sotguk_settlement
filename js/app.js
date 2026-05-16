@@ -282,24 +282,35 @@ async function initDashboardData() {
             let pastDaysTotal = 0;
             let hasOldData = false;
             
+            // 딱 3개월(이번 달, 1달 전, 2달 전)만 남기기 위한 허용 목록 (진짜 오늘 기준)
+            const realNow = new Date();
+            const rYear = realNow.getFullYear();
+            const rMonth = realNow.getMonth() + 1;
+
+            const validMonths = [
+                `${rYear}-${String(rMonth).padStart(2, '0')}`,
+                `${new Date(rYear, rMonth - 2, 1).getFullYear()}-${String(new Date(rYear, rMonth - 2, 1).getMonth() + 1).padStart(2, '0')}`,
+                `${new Date(rYear, rMonth - 3, 1).getFullYear()}-${String(new Date(rYear, rMonth - 3, 1).getMonth() + 1).padStart(2, '0')}`
+            ];
+
             for (const [dateKey, amount] of Object.entries(meatUsageData)) {
-                if (dateKey.startsWith(currentYYYYMM)) {
-                    if (dateKey !== todayStr) {
+                const dateYYYYMM = dateKey.substring(0, 7);
+                if (validMonths.includes(dateYYYYMM)) {
+                    if (dateKey.startsWith(currentYYYYMM) && dateKey !== todayStr) {
                         pastDaysTotal += amount;
                     }
                 } else {
-                    // 이번 달이 아닌 이전 달 데이터는 삭제하도록 설정
+                    // 허용 목록에 없는 데이터(과거 또는 매크로로 넣은 미래 데이터)는 무조건 삭제
                     meatUsageData[dateKey] = deleteField();
                     hasOldData = true;
                 }
             }
             
             if (hasOldData) {
-                // 파이어베이스에서 이전 달 데이터 즉시 완전 삭제
                 await setDoc(branchRef, { meatUsage: meatUsageData }, { merge: true });
-                // 로컬 변수에서도 찌꺼기 삭제
                 for (const dateKey in meatUsageData) {
-                    if (!dateKey.startsWith(currentYYYYMM)) delete meatUsageData[dateKey];
+                    const dateYYYYMM = dateKey.substring(0, 7);
+                    if (!validMonths.includes(dateYYYYMM)) delete meatUsageData[dateKey];
                 }
             }
             currentMonthMeatTotal = pastDaysTotal;

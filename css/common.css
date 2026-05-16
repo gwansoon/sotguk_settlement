@@ -63,6 +63,11 @@ h1 {
     color: #000000;
 }
 
+.btn.excel {
+    background-color: #2ecc71;
+    color: white;
+}
+
 .version-info {
     text-align: center;
     color: #bbb;

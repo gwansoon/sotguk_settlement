@@ -20,7 +20,7 @@ const runMacroBtn = document.getElementById('runMacroBtn');
 const targetBranches = ["test"]; 
 
 // 넣으실 시제 정산 데이터와 날짜
-const targetDate = "2026-05-15";
+const targetDate = "2026-01-17";
 const cashDataToInsert = {
     actualAmount: 3000000, // 실제금액
     bankDepositor: "관순순", // 입금자명
