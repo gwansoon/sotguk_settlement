@@ -68,7 +68,7 @@ h1 {
     color: #bbb;
     font-size: 12px;
     margin-top: 24px;
-    margin-bottom: 20px; /* 아래쪽 여백 추가 */
+    margin-bottom: 0px; /* 버전 아래쪽 여백 추가 */
 }
 
 /* 하단 푸터 메뉴 스타일 */
