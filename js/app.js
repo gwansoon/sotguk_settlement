@@ -86,10 +86,10 @@ currentDateElement.innerText = `${year}년 ${month}월 ${day}일 (${week})`;
 // --- 준비량 정산 데이터 ---
 const prepMenus = [
     { id: 'yuk', name: '육개장', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0,1,2,3,4,5,6], alwaysTop: true },
-    { id: 'galbi', name: '갈비탕', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [0,1,2,3,4,5,6], alwaysTop: true },
+    { id: 'galbi', name: '갈비탕', type: 'kg', options: [5, 10, 15], labels: ['5', '10', '15'], days: [0,1,2,3,4,5,6], alwaysTop: true },
     { id: 'seonji', name: '선지해장국', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
     { id: 'sau', name: '사골우거지', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [0, 1, 3, 5], alwaysTop: false }, // 일월수금
-    { id: 'galbijjim', name: '갈비찜', type: 'kg', options: [15, 20, 30], labels: ['15', '20', '30'], days: [6], alwaysTop: false }, // 토
+    { id: 'galbijjim', name: '갈비찜', type: 'kg', options: [5, 7.5, 10], labels: ['5', '7.5', '10'], days: [6], alwaysTop: false }, // 토
     { id: 'bone', name: '뼈해장국', type: 'kg', options: [15, 20], labels: ['15', '20'], days: [2, 4, 6], alwaysTop: false }, // 화목토
     { id: 'gom', name: '곰탕', type: 'pot', options: [1, 0.5], labels: ['한솥', '반솥'], days: [2, 4, 6], alwaysTop: false } // 화목토
 ];
@@ -325,7 +325,7 @@ async function initDashboardData() {
             if (meatCumulative) {
                 const todayVal = parseFloat(meatUsage.value) || 0;
                 const total = currentMonthMeatTotal + todayVal;
-                meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${total}kg`;
+                meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${total}개`;
 
                 // 누적이 1 이상이면 자동으로 펼치기
                 if (total >= 1) {

@@ -177,8 +177,9 @@ function calculateEndAmount() {
     const start = parseInt(String(document.getElementById('startAmount').value).replace(/,/g, '')) || 0;
     const inAmt = parseInt(String(document.getElementById('inAmount').value).replace(/,/g, '')) || 0;
     const outAmt = parseInt(String(document.getElementById('outAmount').value).replace(/,/g, '')) || 0;
+    const withdrawalAmt = parseInt(String(document.getElementById('cashWithdrawal').value).replace(/,/g, '')) || 0;
     
-    const endAmt = start + inAmt - outAmt;
+    const endAmt = start + inAmt - outAmt - withdrawalAmt;
     
     const endAmountInput = document.getElementById('endAmount');
     if (endAmountInput) endAmountInput.value = endAmt.toLocaleString();
@@ -187,13 +188,13 @@ function calculateEndAmount() {
 }
 
 // --- 시제 정산 폼 금액 콤마 자동 생성 ---
-const amountInputs = ['startAmount', 'inAmount', 'outAmount'];
+const amountInputs = ['startAmount', 'inAmount', 'outAmount', 'cashWithdrawal'];
 amountInputs.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
         el.addEventListener('input', (e) => {
             e.target.value = formatNumberWithComma(e.target.value);
-            if (['startAmount', 'inAmount', 'outAmount'].includes(id)) {
+            if (['startAmount', 'inAmount', 'outAmount', 'cashWithdrawal'].includes(id)) {
                 calculateEndAmount();
             }
         });
@@ -211,6 +212,7 @@ async function saveCashDataToDB(showAlert = true) {
         startAmount: getNum('startAmount'),
         inAmount: getNum('inAmount'),
         outAmount: getNum('outAmount'),
+        cashWithdrawal: getNum('cashWithdrawal'),
         actualAmount: getNum('actualAmount'),
         bankDepositor: document.getElementById('bankDepositor').value.trim(),
         memo: document.getElementById('cashMemo').value.trim()
@@ -279,7 +281,7 @@ if (cashPreviewBtn) {
 
                 // HTML 표 만들기
                 let tableHtml = '<table class="preview-table"><thead><tr>';
-                const headers = ['날짜', '시작금액', '들어온금액', '나간금액', '입금자명', '마감잔액', '실제금액', '차액(과부족)', '비고'];
+                const headers = ['날짜', '시작금액', '들어온금액', '재료구매', '현금출금', '출금자명', '마감잔액', '실제금액', '차액(과부족)', '비고'];
                 headers.forEach(header => tableHtml += `<th>${header}</th>`);
                 tableHtml += '</tr></thead><tbody>';
 
@@ -288,13 +290,14 @@ if (cashPreviewBtn) {
                     const start = data.startAmount || 0;
                     const inAmt = data.inAmount || 0;
                     const outAmt = data.outAmount || 0;
+                    const withdrawalAmt = data.cashWithdrawal || 0;
                     const actual = data.actualAmount || 0;
-                    const endAmt = start + inAmt - outAmt;
+                    const endAmt = start + inAmt - outAmt - withdrawalAmt;
                     const diff = actual - endAmt;
                     
                     const rowData = [
                         date, start.toLocaleString(), inAmt.toLocaleString(), outAmt.toLocaleString(),
-                        data.bankDepositor || '', endAmt.toLocaleString(), actual.toLocaleString(),
+                        withdrawalAmt.toLocaleString(), data.bankDepositor || '', endAmt.toLocaleString(), actual.toLocaleString(),
                         diff.toLocaleString(), data.memo || ''
                     ];
 
@@ -368,10 +371,11 @@ if (cashShareAllBtn) {
                 const start = data.startAmount || 0;
                 const inAmt = data.inAmount || 0;
                 const outAmt = data.outAmount || 0;
+                const withdrawalAmt = data.cashWithdrawal || 0;
                 const actual = data.actualAmount || 0;
-                const endAmt = start + inAmt - outAmt;
+                const endAmt = start + inAmt - outAmt - withdrawalAmt;
                 const diff = actual - endAmt;
-                return { '날짜': date, '시작금액': start, '들어온금액': inAmt, '나간금액': outAmt, '입금자명': data.bankDepositor || '', '마감잔액': endAmt, '실제금액': actual, '차액(과부족)': diff, '비고': data.memo || '' };
+                return { '날짜': date, '시작금액': start, '들어온금액': inAmt, '재료구매': outAmt, '현금출금': withdrawalAmt, '출금자명': data.bankDepositor || '', '마감잔액': endAmt, '실제금액': actual, '차액(과부족)': diff, '비고': data.memo || '' };
             });
 
             // 엑셀 파일 생성
@@ -399,7 +403,7 @@ if (cashShareAllBtn) {
                 }
             }
 
-            ws['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 40 }];
+            ws['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 40 }];
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, `${month}월 시제정산`);
             const fileName = `솥국_${savedBranchName}점_${year}년${month}월_시제정산.xlsx`;
@@ -445,6 +449,7 @@ async function loadCashDataForDate() {
     const startAmountInput = document.getElementById('startAmount');
     const inAmountInput = document.getElementById('inAmount');
     const outAmountInput = document.getElementById('outAmount');
+    const cashWithdrawalInput = document.getElementById('cashWithdrawal');
     const actualAmountInput = document.getElementById('actualAmount');
     const bankDepositorInput = document.getElementById('bankDepositor');
     const cashMemoInput = document.getElementById('cashMemo');
@@ -464,6 +469,7 @@ async function loadCashDataForDate() {
     startAmountInput.value = '';
     inAmountInput.value = '';
     outAmountInput.value = '';
+    cashWithdrawalInput.value = '';
     actualAmountInput.value = '';
     bankDepositorInput.value = '';
     cashMemoInput.value = '';
@@ -513,6 +519,7 @@ async function loadCashDataForDate() {
                 if (data.startAmount) startAmountInput.value = formatNumberWithComma(String(data.startAmount));
                 if (data.inAmount) inAmountInput.value = formatNumberWithComma(String(data.inAmount));
                 if (data.outAmount) outAmountInput.value = formatNumberWithComma(String(data.outAmount));
+                if (data.cashWithdrawal) cashWithdrawalInput.value = formatNumberWithComma(String(data.cashWithdrawal));
                 if (data.actualAmount) actualAmountInput.value = formatNumberWithComma(String(data.actualAmount));
                 if (data.bankDepositor) bankDepositorInput.value = data.bankDepositor;
                 if (data.memo) cashMemoInput.value = data.memo;
