@@ -535,3 +535,14 @@ loadCashDataForDate(); // 화면 진입 시 즉시 실행
 
 // 시제(가게현금) 정산 관련 로직을 관리하는 파일입니다.
 console.log("시제 정산 화면 로드됨");
+
+// 로그아웃 기능
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        if (confirm('로그아웃 하시겠습니까?')) {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.replace('login.html');
+        }
+    });
+}

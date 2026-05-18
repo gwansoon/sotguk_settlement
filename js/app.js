@@ -56,6 +56,7 @@ const inventoryToggle = document.getElementById('inventoryToggle');
 const meatToggle = document.getElementById('meatToggle');
 const meatContainer = document.getElementById('meatContainer');
 const trafficBtns = document.querySelectorAll('.traffic-btn');
+const logoutBtn = document.getElementById('logoutBtn');
 
 // 고기 누적 계산을 위한 전역 변수
 let currentMonthMeatTotal = 0;
@@ -514,3 +515,13 @@ shareBtn.addEventListener('click', async () => {
     // 공유 창이 뜨는 것과 동시에 백그라운드에서 안전하게 고기사용량 DB 업데이트
     saveMeatDataToDB();
 });
+
+// 로그아웃 기능
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        if (confirm('로그아웃 하시겠습니까?')) {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.replace('html/login.html');
+        }
+    });
+}
