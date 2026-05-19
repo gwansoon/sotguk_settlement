@@ -44,6 +44,8 @@ const salesUnclassifiedCount = document.getElementById('salesUnclassifiedCount')
 const salesUnclassifiedAmount = document.getElementById('salesUnclassifiedAmount');
 const salesTotalAmount = document.getElementById('salesTotalAmount');
 const couponCount = document.getElementById('couponCount');
+const petGomgukCount = document.getElementById('petGomgukCount');
+const retortCount = document.getElementById('retortCount');
 const meatUsage = document.getElementById('meatUsage');
 const meatCumulative = document.getElementById('meatCumulative');
 const memoInput = document.getElementById('memoInput');
@@ -55,6 +57,9 @@ const prepToggle = document.getElementById('prepToggle');
 const inventoryToggle = document.getElementById('inventoryToggle');
 const meatToggle = document.getElementById('meatToggle');
 const meatContainer = document.getElementById('meatContainer');
+const meatSection = document.getElementById('meatSection');
+const productToggle = document.getElementById('productToggle');
+const productContainer = document.getElementById('productContainer');
 const trafficBtns = document.querySelectorAll('.traffic-btn');
 const logoutBtn = document.getElementById('logoutBtn');
 
@@ -63,6 +68,11 @@ let currentMonthMeatTotal = 0;
 let meatUsageData = {};
 
 branchNameInput.innerText = savedBranchName + '점'; // 메인 화면 지점명에 텍스트로 표시
+
+// 도곡점인 경우에만 고기사용량 영역 표시
+if (meatSection && savedBranchName === '도곡') {
+    meatSection.style.display = 'block';
+}
 
 // --- 모바일 줌인/줌아웃 강제 차단 ---
 // 두 손가락으로 화면을 확대/축소하는 터치 동작 방지
@@ -222,6 +232,13 @@ if (meatToggle && meatContainer) {
         meatContainer.classList.toggle('hide-content');
         const icon = meatToggle.querySelector('.toggle-icon');
         if (icon) icon.innerText = meatContainer.classList.contains('hide-content') ? '∨' : '∧';
+    });
+}
+if (productToggle && productContainer) {
+    productToggle.addEventListener('click', () => {
+        productContainer.classList.toggle('hide-content');
+        const icon = productToggle.querySelector('.toggle-icon');
+        if (icon) icon.innerText = productContainer.classList.contains('hide-content') ? '∨' : '∧';
     });
 }
 
@@ -387,7 +404,7 @@ if (meatUsage) {
     meatUsage.addEventListener('input', () => {
         const todayVal = parseFloat(meatUsage.value) || 0;
         if (meatCumulative) {
-            meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${currentMonthMeatTotal + todayVal}kg`;
+            meatCumulative.innerText = `${currentMonthMeatTotal} + ${todayVal} = ${currentMonthMeatTotal + todayVal}개`;
         }
     });
 }
@@ -447,8 +464,10 @@ function gatherSettlementData() {
         unclassifiedA: salesUnclassifiedAmount.value || '0',
         totalA: salesTotalAmount.innerText,
         couponC: couponCount.value || '0',
+        petGomgukC: petGomgukCount.value || '0',
+        retortC: retortCount.value || '0',
         meat: meatUsage.value || '0',
-        meatTotal: `${currentMonthMeatTotal + (parseFloat(meatUsage.value) || 0)}kg`,
+        meatTotal: `${currentMonthMeatTotal + (parseFloat(meatUsage.value) || 0)}개`,
         memo: memoInput.value.trim(),
         prep: prepMenus.map(m => ({
             name: m.name,

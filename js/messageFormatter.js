@@ -8,6 +8,8 @@ export function generateSummaryMessage(data) {
         unclassifiedC, unclassifiedA,
         totalA,
         couponC,
+        petGomgukC,
+        retortC,
         meat,
         meatTotal,
         memo,
@@ -43,13 +45,25 @@ export function generateSummaryMessage(data) {
         `   • 배달 : ${deliveryC}건 / ${deliveryA}원\n` +
         `   • 미분류 : ${unclassifiedC}건 / ${unclassifiedA}원\n` +
         `   총 매출액 : ${totalA}\n` +
-        `---------------------------------\n` +
-        `✔️ 쿠폰사용 : ${couponC}개\n` +
         `---------------------------------\n`;
 
+
+    if(parseInt(couponC) > 0){
+        message += `✔️ 쿠폰사용 : ${couponC}개\n` +
+        `---------------------------------\n`;
+    }
+    
     if (parseFloat(meat) > 0 || parseFloat(meatTotal) > 0) {
-        message += `✔️ 고기사용량 : 오늘 ${meat}kg | 누적 ${meatTotal}\n` +
+        message += `✔️ 고기사용량 : 오늘 ${meat}개 | 누적 ${meatTotal}\n` +
             `---------------------------------\n`;
+    }
+
+
+    if (parseInt(petGomgukC) > 0 || parseInt(retortC) > 0) {
+        message += `✔️ 상품 판매\n`;
+        if (parseInt(petGomgukC) > 0) message += `   • 패트곰국1.5L : ${petGomgukC}개\n`;
+        if (parseInt(retortC) > 0) message += `   • 레토르트 : ${retortC}개\n`;
+        message += `---------------------------------\n`;
     }
 
     if (memo) {

@@ -1,4 +1,4 @@
 // 앱 전체 버전을 한 곳에서 관리합니다.
-export const APP_VERSION = "v2.2.1 Buildit.";
+export const APP_VERSION = "v2.3.1 Buildit.";
 
 // 개발중입니다. 주석 관리 잘하기

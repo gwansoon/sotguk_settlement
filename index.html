@@ -90,13 +90,32 @@
             </div>
         </div>
 
+        <!-- 추가 상품 판매 영역 -->
+        <div class="settlement-section compact">
+            <div class="section-header toggle-header" id="productToggle" style="margin-bottom: 8px;">
+                <h2 style="margin: 0;">제품판매</h2>
+                <span style="font-size: 13px; color: #888; margin-left: 70px;">   패트곰국 | 레토르트</span>
+                <span class="toggle-icon">∨</span>
+            </div>
+            
+            <div id="productContainer" class="hide-content">
+                <div class="input-row" style="margin-bottom: 10px;">
+                    <h2 style="margin: 0; flex: 0 0 110px; font-size: 15px;">패트곰국1.5L</h2>
+                    <input type="number" id="petGomgukCount" placeholder="판매 갯수" inputmode="numeric" style="flex: 1; text-align: right; padding: 10px 12px;">
+                </div>
+                <div class="input-row" style="margin-bottom: 0;">
+                    <h2 style="margin: 0; flex: 0 0 110px; font-size: 15px;">레토르트</h2>
+                    <input type="number" id="retortCount" placeholder="판매 갯수" inputmode="numeric" style="flex: 1; text-align: right; padding: 10px 12px;">
+                </div>
+            </div>
+        </div>
 
         <!-- 고기사용량 영역 -->
-        <div class="settlement-section compact" style="margin-bottom: 8px;">
+        <div id="meatSection" class="settlement-section compact" style="margin-bottom: 8px; display: none;">
             <div class="section-header toggle-header" id="meatToggle" style="margin-bottom: 8px;">
                 <div>
                     <h2 style="margin: 0; display: inline-block;">고기사용량</h2>
-                    <span style="font-size: 13px; color: #888; margin-left: 6px;">   * 눈꽃고기 해당지점만 입력</span>
+                    <span style="font-size: 13px; color: #888; margin-left: 70px;">   * 도곡점 입력</span>
                 </div>
                 <span class="toggle-icon">∨</span>
             </div>
